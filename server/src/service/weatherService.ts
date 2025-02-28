@@ -1,13 +1,12 @@
 import dotenv from 'dotenv';
-// import { response } from 'express';
 dotenv.config();
 
-// TODO: Define an interface for the Coordinates object
+// Define the Coordinates interface
 interface Coordinates {
   latitude: number,
   longitude: number
 }
-// TODO: Define a class for the Weather object
+// Define the Weather class
 class Weather {
   city: string;
   date: string;
@@ -35,28 +34,43 @@ class Weather {
     this.humidity = humidity
   }
 }
-// TODO: Complete the WeatherService class
+// Define the WeatherService class
 class WeatherService {
 
+  // getWeatherForCity method
   async getWeatherForCity(city: string) {
     const baseURL = process.env.API_BASE_URL
     const APIKey = process.env.API_KEY
     const cityName = city
+    // Build the geocode URL and return the json file
     const geocodeURL = `${baseURL}/geo/1.0/direct?q=${cityName},USA&limit=1&appid=${APIKey}`
-    const coorInfo = await fetch(geocodeURL).then((response) => response.json())
-    // if (!coorInfoResponse.ok) {
-    //   throw new Error(`Error fetching geocode data: ${coorInfoResponse.statusText}`);
-    // }
+    const coorInfo = await fetch(geocodeURL).then((response) => {
+      if (!response.ok) {
+        throw new Error(`Error fetching geocode data: ${response.statusText}`);
+      } else {
+        console.log('Location geocoded')
+        return response.json();
+      }
+    })
   
+    // Build the location coordinates
     const coordinates: Coordinates = {
       latitude: coorInfo[0].lat,
       longitude: coorInfo[0].lon
     }
 
+    // Get current weather
     const weatherURL = `${baseURL}/data/2.5/weather?lat=${coordinates.latitude}&lon=${coordinates.longitude}&appid=${APIKey}&units=imperial`
-    console.log(weatherURL)
-    const currentWeather = await fetch(weatherURL).then((response) => response.json())
+    const currentWeather = await fetch(weatherURL).then((response) => {
+      if (!response.ok) {
+        throw new Error(`Error fetching current weather data: ${response.statusText}`);
+      } else {
+        console.log('Current weather found')
+        return response.json();
+      }
+    })
   
+    // Build current weather object
     const current = new Weather (
       cityName,
       new Date(currentWeather.dt * 1000).toLocaleDateString(),
@@ -67,10 +81,18 @@ class WeatherService {
       currentWeather.main.humidity
     )
 
+    // Get forecasted weather
     const forecastURL = `${baseURL}/data/2.5/forecast?lat=${coordinates.latitude}&lon=${coordinates.longitude}&appid=${APIKey}&units=imperial`
-    console.log(forecastURL)
-    const futureWeather = await fetch(forecastURL).then((response) => response.json())
+    const futureWeather = await fetch(forecastURL).then((response) => {
+      if (!response.ok) {
+        throw new Error(`Error fetching forecasted weather data: ${response.statusText}`);
+      } else {
+        console.log('Forecasted weather found')
+        return response.json();
+      }
+    })
     
+    // Build weather array with current and forecasted objects
     let forecastArray = [current]
     for (let i = 0; i < futureWeather.list.length; i += 8) {
     const forecast = new Weather(
