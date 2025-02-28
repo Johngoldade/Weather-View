@@ -71,7 +71,7 @@ To search a different city, just type its name into the search bar. Cities you h
 ## License
 
 
-Licensed under the [MIT](https://github.com/github/choosealicense.com/blob/gh-pages/_licenses/mit.txt) license.
+Licensed under the [MIT](./LICENSE) license.
 
 
 ## Contributing
