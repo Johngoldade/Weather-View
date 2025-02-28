@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { v4 as uuidv4 } from 'uuid'
 
-// TODO: Define a City class with name and id properties
+// Define the City class 
 class City {
   name: string;
   id: string;
@@ -14,36 +14,43 @@ class City {
     this.id = id
   }
 }
-// TODO: Complete the HistoryService class
+// Define the HistoryService class
 class HistoryService {
-  // TODO: Define a read method that reads from the searchHistory.json file
+
+  //Define a read method
   private async read() {
-    return fs.readFileSync('db/searchHistory.json', 'utf8')
+    try {
+      return fs.readFileSync('db/searchHistory.json', 'utf8')
+    } catch (error) {
+      console.error(error)
+      return ''
+    }
   }
-  // // TODO: Define a write method that writes the updated cities array to the searchHistory.json file
+
+  // Define a write method
   private async write(cities: City[]) {
     const cityList = JSON.stringify(cities, null, 2)
     fs.writeFile('db/searchHistory.json', cityList, (err) =>
         err ? console.error(err) : console.log('Success!'))
   }
-  // // TODO: Define a getCities method that reads the cities from the searchHistory.json file and returns them as an array of City objects
+
+  // Define a getCities method to get the cities
   async getCities() {
+
     const cities = await this.read();
     let cityArray: City[] = []
     try {
+      // Code was reccomended by CoPilot
       cityArray = [].concat(JSON.parse(cities));
-      
-    } catch (err) {
-      // cityArray = [];
+      return cityArray;
+    } catch (error) {
+      console.error(error)
+      return cityArray = []
     }
-    return cityArray;
-
-    
   }
-  // TODO Define an addCity method that adds a city to the searchHistory.json file
+
+  // Define an addCity method 
   async addCity(city: string) {
-    const name = city
-    console.log(`This route works with ${name}!`)
 
     const newCity = new City(
       city,
@@ -52,19 +59,20 @@ class HistoryService {
 
     return await this.getCities()
       .then((cities) => {
+        // Code was reccomended by CoPilot
         return [...cities, newCity];
       })
       .then((updatedArray) => this.write(updatedArray))
       .then(() => newCity);
   }
     
-  // // * BONUS TODO: Define a removeCity method that removes a city from the searchHistory.json file
+  // Define a removeCity method 
   async removeCity(id: string) {
-    const toDelete = id
 
     const cityList = await this.getCities();
     for (let i = 0; i < cityList.length; i++) {
-      if (cityList[i].id === toDelete) {
+      // Code was reccomended by CoPilot
+      if (cityList[i].id === id) {
         cityList.splice(i, 1);
         break;
       }
