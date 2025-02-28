@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-// import { response } from 'express';
 dotenv.config();
 
 // TODO: Define an interface for the Coordinates object
